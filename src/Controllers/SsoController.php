@@ -116,6 +116,11 @@ class SsoController extends Controller
         $access = $this->config->get('user')
                                ->get('access', null);
 
+        //If not logged in to web app need to redirect back to laravel to login first
+        if(!$this->user) {
+            return redirect('login?redirect='.urlencode($request->fullUrl()));
+        }
+
         if (! is_null($access) && ! $this->parseUserValue($access)) {
             abort(403); //Forbidden
         }
