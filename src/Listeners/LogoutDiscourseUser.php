@@ -77,6 +77,13 @@ class LogoutDiscourseUser implements ShouldQueue
             )->user;
 
             $response = $this->client->post("admin/users/{$user->id}/log_out");
+
+            if ($response->getStatusCode() !== 200) {
+                $this->logger->notice(
+                    "When logging out user {$event->user->id} Discourse returned status code {$response->getStatusCode()}:",
+                    ['reason' => $response->getReasonPhrase()]
+                );
+            }
         }
         catch(\Exception $e) {
             $this->logger->notice(
@@ -86,11 +93,6 @@ class LogoutDiscourseUser implements ShouldQueue
         }
 
 
-        if ($response->getStatusCode() !== 200) {
-            $this->logger->notice(
-                "When logging out user {$event->user->id} Discourse returned status code {$response->getStatusCode()}:",
-                ['reason' => $response->getReasonPhrase()]
-            );
-        }
+        
     }
 }
